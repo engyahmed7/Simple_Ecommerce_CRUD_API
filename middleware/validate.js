@@ -26,7 +26,7 @@ const user = {
     const order = {
     type: "object",
     properties: {
-        itemIds: { type: "array" }
+        items: { type: "array" }
     },
     additionalProperties: false
     }

@@ -19,31 +19,36 @@ exports.getAllOrders = async ( req, res ) => {
     }
 }
 
-exports.addNewOrders = async (req,res)=>{
+exports.addNewOrders = async (req, res) => {
     try {
-        const {itemIds} = req.body;
-        const foundedItems = await Item.find({_id:{$in:itemIds}});
-        if(foundedItems.length == 0){
-            return res.status(404).json({
-                message:"Items not found"
-            })
-        }
+        const { items } = req.body;
+        
         let totalPrice = 0;
-        foundedItems.forEach(item=>{
-            totalPrice += item.price;
-        })
-        const newOrder = new Order({totalPrice,itemIds});
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const foundItem = await Item.findById(item.itemId);
+            if (!foundItem) {
+                return res.status(404).json({
+                    message: `Item with ID ${item.itemId} not found`
+                });
+            }
+            totalPrice += foundItem.price * item.quantity;
+        }
+
+        const newOrder = new Order({ totalPrice, items });
         await newOrder.save();
+
         res.status(201).json({
-            message:"Order added successfully",
-            order:newOrder
-        })
+            message: "Order added successfully",
+            order: newOrder
+        });
     } catch (err) {
         res.status(500).json({
-            message:err.message
-        })
+            message: err.message
+        });
     }
-}
+};
+
 
 exports.getOrderById = async ( req, res ) => {
     const{id}=req.params;

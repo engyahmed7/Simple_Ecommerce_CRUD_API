@@ -4,10 +4,17 @@ const Order = mongoose.Schema({
         type : Number,
         required : true,
     },
-    itemIds:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Item'
-    }]
-
+    items: [
+        {
+          itemId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'Item'
+          },
+          quantity: {
+            type: Number,
+            required: true,
+          },
+        },
+      ],
 })
 module.exports =  mongoose.model( 'orders' , Order)
